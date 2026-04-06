@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TruthLens — AI Usage Detector</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@300;400;500&family=Syne:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 18 18" fill="none">
+        <path d="M9 2L16 14H2L9 2Z" fill="#0a0a0f"/>
+        <circle cx="9" cy="10" r="2" fill="#0a0a0f"/>
+      </svg>
+    </div>
+    Truth<span>Lens</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#">HOW IT WORKS</a></li>
+    <li><a href="#">ACCURACY</a></li>
+    <li><a href="#">PRICING</a></li>
+    <li><a href="#">API</a></li>
+  </ul>
+  <button class="nav-cta">GET ACCESS</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="badge">
+    <div class="badge-dot"></div>
+    AI CONTENT DETECTION — BETA v2.1
+  </div>
+  <h1>Detect <em>AI writing</em><br>in any document</h1>
+  <p>Upload Word, PowerPoint, or Excel files — or paste a Google Docs, Slides, or Sheets link. Our model scans every paragraph and returns a precise AI usage score.</p>
+</section>
+
+<!-- MAIN UPLOAD CARD -->
+<div class="main-card">
+  <div class="card">
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('upload', this)">UPLOAD FILES</button>
+      <button class="tab" onclick="switchTab('link', this)">PASTE LINK</button>
+    </div>
+
+    <!-- UPLOAD PANEL -->
+    <div class="panel active" id="panel-upload">
+      <div class="upload-zone" id="drop-zone">
+        <input type="file" multiple accept=".docx,.pptx,.xlsx,.doc,.ppt,.xls" onchange="handleFiles(this.files)">
+        <div class="upload-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M4 16.5V19a1 1 0 001 1h14a1 1 0 001-1v-2.5M12 4v11m0-11L8.5 7.5M12 4l3.5 3.5"/>
+          </svg>
+        </div>
+        <h3>Drop your documents here</h3>
+        <p>or click to browse — supports .docx .pptx .xlsx</p>
+        <div class="file-types" style="pointer-events:none;">
+          <div class="file-badge"><span class="dot dot-word"></span>WORD</div>
+          <div class="file-badge"><span class="dot dot-ppt"></span>POWERPOINT</div>
+          <div class="file-badge"><span class="dot dot-excel"></span>EXCEL</div>
+        </div>
+      </div>
+      <div class="file-list" id="file-list"></div>
+      <div class="analyze-row">
+        <span class="item-count" id="upload-count">0 files selected</span>
+        <button class="analyze-btn" id="analyze-upload-btn" onclick="runAnalysis()" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          ANALYZE DOCUMENTS
+        </button>
+      </div>
+    </div>
+
+    <!-- LINK PANEL -->
+    <div class="panel" id="panel-link">
+      <span class="link-label">SUPPORTED SERVICES</span>
+      <div style="display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;">
+        <div class="google-chip">
+          <svg viewBox="0 0 24 24" fill="#4285F4"><path d="M6 2h8l6 6v14a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z"/><path d="M14 2v6h6" fill="none" stroke="#1a73e8" stroke-width="1.5"/></svg>
+          Google Docs
+        </div>
+        <div class="google-chip">
+          <svg viewBox="0 0 24 24" fill="#EAA700"><path d="M6 2h8l6 6v14a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z"/></svg>
+          Google Slides
+        </div>
+        <div class="google-chip">
+          <svg viewBox="0 0 24 24" fill="#0F9D58"><path d="M6 2h8l6 6v14a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z"/></svg>
+          Google Sheets
+        </div>
+      </div>
+      <span class="link-label">PASTE DOCUMENT LINK</span>
+      <div class="link-input-row">
+        <input type="url" class="link-input" id="link-input" placeholder="https://docs.google.com/document/d/...">
+        <button class="add-btn" onclick="addLink()">ADD LINK</button>
+      </div>
+      <div class="link-list" id="link-list"></div>
+      <div class="analyze-row">
+        <span class="item-count" id="link-count">0 links added</span>
+        <button class="analyze-btn" id="analyze-link-btn" onclick="runAnalysis()" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          ANALYZE LINKS
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div class="results-section" id="results-section">
+  <div class="results-header">
+    <div>
+      <div class="results-title">Analysis Complete</div>
+      <div class="results-subtitle" id="results-ts"></div>
+    </div>
+    <button class="add-btn" onclick="resetAll()" style="font-size:0.7rem;">↩ ANALYZE MORE</button>
+  </div>
+
+  <!-- Summary -->
+  <div class="summary-card">
+    <div class="summary-stat">
+      <div class="value" id="sum-docs">—</div>
+      <div class="key">DOCUMENTS SCANNED</div>
+    </div>
+    <div class="summary-stat">
+      <div class="value" id="sum-avg">—</div>
+      <div class="key">AVG AI USAGE</div>
+    </div>
+    <div class="summary-stat">
+      <div class="value" id="sum-high">—</div>
+      <div class="key">HIGH RISK DOCS</div>
+    </div>
+    <div class="summary-stat">
+      <div class="value" id="sum-words">—</div>
+      <div class="key">WORDS ANALYZED</div>
+    </div>
+  </div>
+
+  <div class="results-grid" id="results-grid"></div>
+</div>
+
+<!-- LOADING OVERLAY -->
+<div class="loading-overlay" id="loading">
+  <div class="spinner"></div>
+  <div class="loading-text">Analyzing documents…</div>
+  <div class="loading-steps">
+    <div class="loading-step" id="step1"><div class="step-dot"></div>Extracting text content</div>
+    <div class="loading-step" id="step2"><div class="step-dot"></div>Running AI pattern detection</div>
+    <div class="loading-step" id="step3"><div class="step-dot"></div>Scoring paragraph-by-paragraph</div>
+    <div class="loading-step" id="step4"><div class="step-dot"></div>Compiling final report</div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span>© 2026 TruthLens Inc. — Trained on 40M+ documents</span>
+  <span>ACCURACY RATE: 94.2% — v2.1.0</span>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
